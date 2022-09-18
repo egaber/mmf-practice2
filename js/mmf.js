@@ -5,6 +5,9 @@ var mistakes = "";
 var timeSeconds = 60;
 
 var startTime = 0;
+var num1=0;
+var num2=0;
+
 
 function showFinishedModal(title) {
 	$("#finishedMsg").text(title);
@@ -16,22 +19,19 @@ function showFinishedModal(title) {
 
 function numEntered(num) {
 	console.log("number key clicked");
+	var sum = num1 + num2;
 
 	var ans = $("#ans").text();
 	console.log("current answer=" + ans);
 
-	var val = new Number(num);	
-	if (ans == "__") {
-		$("#ans").text(val);
-		$("#btnGo").removeAttr("disabled");
-		$("#btnDel").removeAttr("disabled");
-	} else {
-		if (ans.length == 2) {
-			return; // max 2 digits
-		}
-		
+	var val = new Number(num);
+	$("#ans").text(val);
+
+	if(sum<10){
+		goNext();
+	}else if(ans != "__"){
 		$("#ans").text(ans + val);
-	
+		goNext();
 	}
 }
 
@@ -42,9 +42,6 @@ function goNext() {
 	var ans = $("#ans").text();
 
 	// check answer
-	var num1 = parseInt($("#num1").text());
-	var num2 = parseInt($("#num2").text());
-
 	var sum = num1 + num2;
 
 	console.log("sum=" + sum);
@@ -68,9 +65,12 @@ function goNext() {
 		showFinishedModal("Finished all questions!");
 		return;
 	}
+	
+	this.num1 = Math.floor(Math.random() * 10);
+	this.num2 = Math.floor(Math.random() * 10);
 
-	$("#num1").text(Math.floor(Math.random() * 10));
-	$("#num2").text(Math.floor(Math.random() * 10));
+	$("#num1").text(num1);
+	$("#num2").text(num2);
 
 	$("#btnGo").attr("disabled", "disabled");
 	$("#btnDel").attr("disabled", "disabled");
@@ -134,35 +134,18 @@ $("body").keypress(function(event) {
 
 $("#keys button").click(function() {
 console.log("button click val=" + $(this).val());
+var num1 = $("#num1").val();
+var num2 = $("#num2").val();
+
+var isSingle = num1+num2 < 10
 
 
 var val = $(this).val();
 var ans = $("#ans").text();
 
 if (!isNaN(val)) {
-	numEntered(val);
-} else {
-	switch(val) {
-		case "D":
-			console.log("Del clicked");
-			if (ans.length == 1) {
-				$("#ans").text("__");
-				$("#btnGo").attr("disabled", "disabled");
-				$("#btnDel").attr("disabled", "disabled");
-			} else {
-				$("#ans").text(ans.substring(0, ans.length - 1));
-				$("#btnDel").removeAttr("disabled");
-			}
-			break;
-
-		case "go":
-			goNext();
-			break;
-
-	}
-
+	numEntered(val, isSingle);
 }
-
 
 });
 
